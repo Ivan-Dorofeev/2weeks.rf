@@ -97,6 +97,14 @@ def read_excel_file(excel_file):
         xml_ff.write(xml_file)
 
 
+def remove_excel_files(company_name):
+    for root, dirs, files in os.walk(company_name):
+        for file in files:
+            if file.endswith(".xlsx"):
+                file_path = os.path.join(company_name, file)
+                os.remove(file_path)
+
+
 if __name__ == "__main__":
     company_name = 'FLORICOLA ATTAROSES CIA.LTDA.'
 
@@ -109,3 +117,4 @@ if __name__ == "__main__":
             if file.endswith(".xlsx"):
                 file_path = os.path.join(company_name, file)
                 dataframe_from_file = read_excel_file(file_path)
+    remove_excel_files(company_name)
