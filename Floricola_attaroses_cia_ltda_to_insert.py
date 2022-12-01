@@ -1,8 +1,11 @@
+import datetime
 import math
 import dicttoxml
 import pandas as pd
 import os
 from ABBYY import CloudOCR
+from transliterate import translit
+from dateutil import parser
 
 
 def pdf_convertor_to_excel(file_name, company_name):
@@ -56,8 +59,9 @@ def read_excel_file(excel_file):
     result['AWB_CONTRAGENT'] = 'FLORICOLA ATTAROSES CIA.LTDA.'
     for row in all_rows:
         if 'SHIPPING DATE' in str(row):
-            result['INVOICE_NUMBER'] = all_rows[all_rows.index(row) + 1][0]
-            result['AMS_DATA'] = all_rows[all_rows.index(row) + 2][0]
+            result['INVOICE_NUMBER'] = all_rows[all_rows.index(row) + 1][0][2:]
+            ams_date = all_rows[all_rows.index(row) + 2][0]
+            result['AMS_DATA'] = datetime.datetime.strftime(parser.parse(ams_date), '%d%m%Y')
         elif 'AWB' in str(row):
             result['AVIA_TICKET'] = all_rows[all_rows.index(row) + 1][0]
             result['TRANSPORT_COMPANY'] = all_rows[all_rows.index(row) + 1][2]
@@ -65,7 +69,8 @@ def read_excel_file(excel_file):
             result['BOX_PLACES_COUNT'] = all_rows[all_rows.index(row) + 1][-1]
             result['FULL_PLACES_COUNT'] = all_rows[all_rows.index(row) + 1][-2]
         elif str(row[0]).startswith('Due Date'):
-            result['MSK_DATA'] = str(row[0]).split('Date')[-1].strip()
+            msk_date = str(row[0]).split('Date')[-1].strip()
+            result['MSK_DATA'] = datetime.datetime.strftime(parser.parse(msk_date), '%d%m%Y')
         elif 'Totals' in str(row):
             result['AWB'] = row[-1].split(' ')[-1]
             result['TOT.STEMS'] = row[2]
@@ -73,16 +78,18 @@ def read_excel_file(excel_file):
             result['MARKING/NOTIFY'] = row[-1]
         elif 'HB' in str(row):
             products = [{
-                'name': row[2],
+                'name': translit(str(row[2]), "ru"),
                 'count': row[6],
                 'price': str(row[7]).split(' ')[-1],
                 'sum': str(row[8]).split(' ')[-1],
                 'total_stems': row[5],
             }]
-            while 'Totals' not in row:
+            while True:
                 row = all_rows[all_rows.index(row) + 1]
+                if 'Totals' in str(row):
+                    break
                 products.append({
-                    'name': row[0],
+                    'name': translit(str(row[0]), "ru"),
                     'count': row[2],
                     'price': str(row[-2]).split(' ')[-1],
                     'sum': str(row[-1]).split(' ')[-1],
