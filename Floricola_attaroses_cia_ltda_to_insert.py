@@ -1,5 +1,8 @@
 import datetime
+import json
 import math
+from pprint import pprint
+
 import dicttoxml
 import pandas as pd
 import os
@@ -77,8 +80,11 @@ def read_excel_file(excel_file):
         elif str(row[0]).startswith('CONSIGNED'):
             result['MARKING/NOTIFY'] = row[-1]
         elif 'HB' in str(row):
+            with open('traslate.json', 'r') as tr_file:
+                translate_dict = json.load(tr_file)
+
             products = [{
-                'name': translit(str(row[2]), "ru"),
+                'name': translate_dict[str(row[2])] if translate_dict.get(str(row[2])) else translit(str(row[2]), "ru"),
                 'count': row[6],
                 'price': str(row[7]).split(' ')[-1],
                 'sum': str(row[8]).split(' ')[-1],
@@ -89,7 +95,7 @@ def read_excel_file(excel_file):
                 if 'Totals' in str(row):
                     break
                 products.append({
-                    'name': translit(str(row[0]), "ru"),
+                    'name': translate_dict[str(row[0])] if translate_dict.get(str(row[0])) else translit(str(row[0]), "ru"),
                     'count': row[2],
                     'price': str(row[-2]).split(' ')[-1],
                     'sum': str(row[-1]).split(' ')[-1],
