@@ -64,16 +64,16 @@ def read_excel_file(excel_file):
         if 'SHIPPING DATE' in str(row):
             result['INVOICE_NUMBER'] = all_rows[all_rows.index(row) + 1][0][2:]
             ams_date = all_rows[all_rows.index(row) + 2][0]
-            result['AMS_DATA'] = datetime.datetime.strftime(parser.parse(ams_date), '%m%d%Y')
+            result['AMS_DATA'] = datetime.datetime.strftime(parser.parse(ams_date), '%Y%m%d')
         elif 'AWB' in str(row):
-            result['AVIA_TICKET'] = all_rows[all_rows.index(row) + 1][0]
+            result['AVIA_TICKET'] = str(all_rows[all_rows.index(row) + 1][0]).replace(' ', '-')
             result['TRANSPORT_COMPANY'] = all_rows[all_rows.index(row) + 1][2]
         elif 'FULL BOXES' in str(row):
-            result['BOX_PLACES_COUNT'] = all_rows[all_rows.index(row) + 1][-1]
-            result['FULL_PLACES_COUNT'] = all_rows[all_rows.index(row) + 1][-2]
+            result['FULL_PLACES_COUNT'] = all_rows[all_rows.index(row) + 1][-1]
+            result['BOX_PLACES_COUNT'] = all_rows[all_rows.index(row) + 1][-2]
         elif str(row[0]).startswith('Due Date'):
             msk_date = str(row[0]).split('Date')[-1].strip()
-            result['MSK_DATA'] = datetime.datetime.strftime(parser.parse(msk_date), '%d%m%Y')
+            result['MSK_DATA'] = datetime.datetime.strftime(parser.parse(msk_date), '%Y%m%d')
         elif 'Totals' in str(row):
             result['AWB'] = row[-1].split(' ')[-1]
             result['TOT.STEMS'] = row[2]
@@ -84,7 +84,8 @@ def read_excel_file(excel_file):
                 translate_dict = json.load(tr_file)
 
             products = [{
-                'name': str(translate_dict[str(row[2])]).capitalize() if translate_dict.get(str(row[2])) else translit(str(row[2]), "ru"),
+                'name': str(translate_dict[str(row[2])]).capitalize() if translate_dict.get(str(row[2])) else translit(
+                    str(row[2]), "ru"),
                 'count': row[6],
                 'price': str(row[7]).split(' ')[-1],
                 'sum': str(row[8]).split(' ')[-1],
@@ -95,7 +96,8 @@ def read_excel_file(excel_file):
                 if 'Totals' in str(row):
                     break
                 products.append({
-                    'name': translate_dict[str(row[0])] if translate_dict.get(str(row[0])) else translit(str(row[0]), "ru"),
+                    'name': translate_dict[str(row[0])] if translate_dict.get(str(row[0])) else translit(str(row[0]),
+                                                                                                         "ru"),
                     'count': row[2],
                     'price': str(row[-2]).split(' ')[-1],
                     'sum': str(row[-1]).split(' ')[-1],
