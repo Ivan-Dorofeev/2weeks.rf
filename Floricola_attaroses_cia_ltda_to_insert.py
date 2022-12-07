@@ -119,7 +119,6 @@ def read_excel_file(excel_file):
 
 
 def remove_excel_files(company_name):
-    """Remove not needed files"""
     for root, dirs, files in os.walk(company_name):
         for file in files:
             if file.endswith(".xlsx"):
