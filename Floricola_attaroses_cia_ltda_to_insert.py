@@ -60,6 +60,7 @@ def read_excel_file(excel_file):
             row_without_nan.append(text)
         if row_without_nan != []:
             all_rows.append(row_without_nan)
+
     # находим нужное в файле
     result['AWB_CONTRAGENT'] = 'ECUCARGA CIA LTDA'
     result['PRICOOL_CONTRAGENT'] = 'FLORICOLA ATTAROSES CIA.LTDA.'
