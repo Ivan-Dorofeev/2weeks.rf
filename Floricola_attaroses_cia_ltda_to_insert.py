@@ -59,7 +59,7 @@ def read_excel_file(excel_file):
             row_without_nan.append(text)
         if row_without_nan != []:
             all_rows.append(row_without_nan)
-    result['AWB_CONTRAGENT'] = 'FLORICOLA ATTAROSES CIA.LTDA.'
+    result['AWB_CONTRAGENT'] = 'ECUCARGA CIA LTDA'
     for row in all_rows:
         if 'SHIPPING DATE' in str(row):
             result['INVOICE_NUMBER'] = all_rows[all_rows.index(row) + 1][0][2:]
@@ -82,23 +82,26 @@ def read_excel_file(excel_file):
         elif 'HB' in str(row):
             with open('traslate.json', 'r') as tr_file:
                 translate_dict = json.load(tr_file)
-
+            product_name = str(row[2])[3:] if str(row[2]).startswith('GR ') else str(row[2])
             products = [{
-                'name': str(translate_dict[str(row[2])]).capitalize() if translate_dict.get(str(row[2])) else translit(
+                'name': str(translate_dict[product_name]) if translate_dict.get(product_name) else translit(
                     str(row[2]), "ru"),
                 'count': row[6],
+                'nomenclature_characteristic': f'Attar Roses,{row[3]}cm',
                 'price': str(row[7]).split(' ')[-1],
                 'sum': str(row[8]).split(' ')[-1],
-                'total_stems': row[5],
+                'total_stems': row[6],
             }]
             while True:
                 row = all_rows[all_rows.index(row) + 1]
                 if 'Totals' in str(row):
                     break
+                product_name = str(row[0])[3:] if str(row[0]).startswith('GR ') else str(row[0])
                 products.append({
-                    'name': translate_dict[str(row[0])] if translate_dict.get(str(row[0])) else translit(str(row[0]),
-                                                                                                         "ru"),
+                    'name': translate_dict[product_name] if translate_dict.get(product_name) else translit(
+                        (product_name), "ru"),
                     'count': row[2],
+                    'nomenclature_characteristic': f'Attar Roses,{row[1]}cm',
                     'price': str(row[-2]).split(' ')[-1],
                     'sum': str(row[-1]).split(' ')[-1],
                     'total_stems': row[-3],
@@ -113,6 +116,7 @@ def read_excel_file(excel_file):
 
 
 def remove_excel_files(company_name):
+    """Remove not needed files"""
     for root, dirs, files in os.walk(company_name):
         for file in files:
             if file.endswith(".xlsx"):
