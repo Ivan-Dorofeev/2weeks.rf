@@ -50,7 +50,7 @@ def read_excel_file(excel_file):
         'CONTRAGENT': 0,
         'TOT.STEMS': 0
     }
-    # убираем Nan
+
     for row in file_rows:
         row_without_nan = []
         for text in row.tolist():
@@ -61,9 +61,8 @@ def read_excel_file(excel_file):
         if row_without_nan != []:
             all_rows.append(row_without_nan)
 
-    # находим нужное в файле
     result['AWB_CONTRAGENT'] = 'ECUCARGA CIA LTDA'
-    result['PRICOOL_CONTRAGENT'] = 'FLORICOLA ATTAROSES CIA.LTDA.'
+    result['ROSE_WEIGHT'] = float(25)
     for row in all_rows:
         if 'SHIPPING DATE' in str(row):
             result['INVOICE_NUMBER'] = all_rows[all_rows.index(row) + 1][0][2:]
@@ -75,15 +74,17 @@ def read_excel_file(excel_file):
         elif 'FULL BOXES' in str(row):
             result['FULL_PLACES_COUNT'] = all_rows[all_rows.index(row) + 1][-1]
             result['BOX_PLACES_COUNT'] = all_rows[all_rows.index(row) + 1][-2]
+            result['AWB'] = float(result['BOX_PLACES_COUNT']) * 25
         elif str(row[0]).startswith('Due Date'):
             msk_date = str(row[0]).split('Date')[-1].strip()
             result['MSK_DATA'] = datetime.datetime.strftime(parser.parse(msk_date), '%Y%m%d')
-        elif 'Totals' in str(row):
-            result['AWB'] = row[-1].split(' ')[-1]
-            result['TOT.STEMS'] = row[2]
         elif str(row[0]).startswith('CONSIGNED'):
             result['MARKING/NOTIFY'] = row[-1]
         elif 'HB' in str(row):
+            # find total_stems
+            for i in all_rows:
+                if 'Totals' in str(i):
+                    result['TOT.STEMS'] = i[2]
             with open('traslate.json', 'r') as tr_file:
                 translate_dict = json.load(tr_file)
             product_name = str(row[2])[3:] if str(row[2]).startswith('GR ') else str(row[2])
@@ -91,10 +92,11 @@ def read_excel_file(excel_file):
                 'name': str(translate_dict[product_name]) if translate_dict.get(product_name) else translit(
                     str(row[2]), "ru"),
                 'count': row[6],
-                'nomenclature_characteristic': f'Attar Roses,{row[3]}cm',
+                'nomenclature_characteristic': f'Attar Roses, {row[3]}cm ',
+                'size' : row[3],
                 'price': str(row[7]).split(' ')[-1],
                 'sum': str(row[8]).split(' ')[-1],
-                'total_stems': row[6],
+                'total_stems': result['TOT.STEMS'],
             }]
             while True:
                 row = all_rows[all_rows.index(row) + 1]
@@ -106,20 +108,21 @@ def read_excel_file(excel_file):
                         (product_name), "ru"),
                     'count': row[2],
                     'nomenclature_characteristic': f'Attar Roses,{row[1]}cm',
+                    'size': row[1],
                     'price': str(row[-2]).split(' ')[-1],
                     'sum': str(row[-1]).split(' ')[-1],
-                    'total_stems': row[-3],
+                    'total_stems': result['TOT.STEMS'],
                 })
             result['PRODUCTS'] = products
 
     xml_file = dicttoxml.dicttoxml(result)
-    print(xml_file)
     write_file = excel_file[:-5] + '.xml'
     with open(write_file, 'wb') as xml_ff:
         xml_ff.write(xml_file)
 
 
 def remove_excel_files(company_name):
+    """Delete .xlsx files"""
     for root, dirs, files in os.walk(company_name):
         for file in files:
             if file.endswith(".xlsx"):
