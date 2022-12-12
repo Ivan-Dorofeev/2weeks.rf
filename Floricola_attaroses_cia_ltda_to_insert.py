@@ -121,11 +121,6 @@ def read_excel_file(excel_file):
     with open(write_file, 'wb') as xml_ff:
         xml_ff.write(xml_file)
 
-    main_dir_id = '1VjKmkkNlVwqonXgkpL8bP-NiaUbsIzsY'
-    upload_file = write_file
-    gfile = drive.CreateFile({'parents': [{'id': main_dir_id}]})
-    gfile.SetContentFile(upload_file)
-
 def remove_excel_files(company_name):
     """Delete .xlsx files"""
     for root, dirs, files in os.walk(company_name):
