@@ -1,15 +1,17 @@
 import datetime
 import json
 import math
-from pprint import pprint
-
 import dicttoxml
 import pandas as pd
 import os
 from ABBYY import CloudOCR
 from transliterate import translit
 from dateutil import parser
+from pydrive.auth import GoogleAuth
+from pydrive.drive import GoogleDrive
 
+gauth = GoogleAuth()
+drive = GoogleDrive(gauth)
 
 def pdf_convertor_to_excel(file_name, company_name):
     """Converts pdf file to xlsx format (excel)"""
@@ -42,13 +44,13 @@ def read_excel_file(excel_file):
         'MSK_DATA': 0,
         'AWB_CONTRAGENT': 0,
         'AWB_BID': 0,
-        'AWB': 0,
-        'PRICOOL_CONTRAGENT': 0,
+        'PRICOOL_CONTRAGENT': 0, # всегда 0
         'TRACK': 0,
         'TRANSPORT_COMPANY': 0,
         'MARKING/NOTIFY': 0,
         'CONTRAGENT': 0,
-        'TOT.STEMS': 0
+        'TOT.STEMS': 0,
+        'IS_MIXED': 0, # одинаковые размеры, одинаковая цена, более 8 наименований
     }
 
     for row in file_rows:
@@ -63,28 +65,27 @@ def read_excel_file(excel_file):
 
     result['AWB_CONTRAGENT'] = 'ECUCARGA CIA LTDA'
     result['ROSE_WEIGHT'] = float(25)
+    result['PRICOOL_CONTRAGENT'] = 'FLORICOLA ATTAROSES CIA.LTDA.'
     for row in all_rows:
         if 'SHIPPING DATE' in str(row):
             result['INVOICE_NUMBER'] = all_rows[all_rows.index(row) + 1][0][2:]
             ams_date = all_rows[all_rows.index(row) + 2][0]
             result['AMS_DATA'] = datetime.datetime.strftime(parser.parse(ams_date), '%Y%m%d')
+            result['MARKING/NOTIFY'] = all_rows[all_rows.index(row) + 3][-1]
         elif 'AWB' in str(row):
             result['AVIA_TICKET'] = str(all_rows[all_rows.index(row) + 1][0]).replace(' ', '-')
-            # result['TRANSPORT_COMPANY'] = all_rows[all_rows.index(row) + 1][2]
         elif 'FULL BOXES' in str(row):
             result['FULL_PLACES_COUNT'] = all_rows[all_rows.index(row) + 1][-1]
             result['BOX_PLACES_COUNT'] = all_rows[all_rows.index(row) + 1][-2]
-            result['AWB'] = float(result['BOX_PLACES_COUNT']) * 25
         elif str(row[0]).startswith('Due Date'):
             msk_date = str(row[0]).split('Date')[-1].strip()
             result['MSK_DATA'] = datetime.datetime.strftime(parser.parse(msk_date), '%Y%m%d')
-        elif str(row[0]).startswith('CONSIGNED'):
-            result['MARKING/NOTIFY'] = row[-1]
         elif 'HB' in str(row):
-            # find total_stems
+            # find total_stems for add to each product total_stems
             for i in all_rows:
                 if 'Totals' in str(i):
                     result['TOT.STEMS'] = i[2]
+
             with open('traslate.json', 'r') as tr_file:
                 translate_dict = json.load(tr_file)
             product_name = str(row[2])[3:] if str(row[2]).startswith('GR ') else str(row[2])
@@ -92,7 +93,7 @@ def read_excel_file(excel_file):
                 'name': str(translate_dict[product_name]) if translate_dict.get(product_name) else translit(
                     str(row[2]), "ru"),
                 'count': row[6],
-                'nomenclature_characteristic': f'Attar Roses, {row[3]}cm ',
+                'nomenclature_characteristic': f'Attar Roses, {row[3]} см ',
                 'size' : row[3],
                 'price': str(row[7]).split(' ')[-1],
                 'sum': str(row[8]).split(' ')[-1],
@@ -106,8 +107,8 @@ def read_excel_file(excel_file):
                 products.append({
                     'name': translate_dict[product_name] if translate_dict.get(product_name) else translit(
                         (product_name), "ru"),
-                    'count': row[2],
-                    'nomenclature_characteristic': f'Attar Roses,{row[1]}cm',
+                    'count': row[4],
+                    'nomenclature_characteristic': f'Attar Roses, {row[1]} см ',
                     'size': row[1],
                     'price': str(row[-2]).split(' ')[-1],
                     'sum': str(row[-1]).split(' ')[-1],
@@ -120,6 +121,10 @@ def read_excel_file(excel_file):
     with open(write_file, 'wb') as xml_ff:
         xml_ff.write(xml_file)
 
+    main_dir_id = '1VjKmkkNlVwqonXgkpL8bP-NiaUbsIzsY'
+    upload_file = write_file
+    gfile = drive.CreateFile({'parents': [{'id': main_dir_id}]})
+    gfile.SetContentFile(upload_file)
 
 def remove_excel_files(company_name):
     """Delete .xlsx files"""
