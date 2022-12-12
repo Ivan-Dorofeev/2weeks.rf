@@ -50,7 +50,7 @@ def read_excel_file(excel_file):
         'MARKING/NOTIFY': 0,
         'CONTRAGENT': 0,
         'TOT.STEMS': 0,
-        'IS_MIXED': 0, # одинаковые размеры, одинаковая цена, более 8 наименований
+        'IS_MIXED': False, # одинаковые размеры, одинаковая цена, более 8 наименований
     }
 
     for row in file_rows:
