@@ -65,7 +65,7 @@ def read_excel_file(excel_file):
 
     result['AWB_CONTRAGENT'] = 'ECUCARGA CIA LTDA'
     result['ROSE_WEIGHT'] = float(25)
-    result['PRICOOL_CONTRAGENT'] = 'FLORICOLA ATTAROSES CIA.LTDA.'
+    result['PRICOOL_CONTRAGENT'] = 0
     for row in all_rows:
         if 'SHIPPING DATE' in str(row):
             result['INVOICE_NUMBER'] = all_rows[all_rows.index(row) + 1][0][2:]
