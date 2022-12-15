@@ -13,6 +13,7 @@ from pydrive.drive import GoogleDrive
 gauth = GoogleAuth()
 drive = GoogleDrive(gauth)
 
+
 def pdf_convertor_to_excel(file_name, company_name):
     """Converts pdf file to xlsx format (excel)"""
 
@@ -44,13 +45,13 @@ def read_excel_file(excel_file):
         'MSK_DATA': 0,
         'AWB_CONTRAGENT': 0,
         'AWB_BID': 0,
-        'PRICOOL_CONTRAGENT': 0, # всегда 0
+        'PRICOOL_CONTRAGENT': 0,  # всегда 0
         'TRACK': 0,
         'TRANSPORT_COMPANY': 0,
         'MARKING/NOTIFY': 0,
         'CONTRAGENT': 0,
-        'TOT.STEMS': 0,
-        'IS_MIXED': False, # одинаковые размеры, одинаковая цена, более 8 наименований
+        'TOT.STEMS': 350,
+        'IS_MIXED': False,  # одинаковые размеры, одинаковая цена, более 8 наименований
     }
 
     for row in file_rows:
@@ -94,7 +95,7 @@ def read_excel_file(excel_file):
                     str(row[2]), "ru"),
                 'count': row[6],
                 'nomenclature_characteristic': f'Attar Roses, {row[3]} см ',
-                'size' : row[3],
+                'size': row[3],
                 'price': str(row[7]).split(' ')[-1],
                 'sum': str(row[8]).split(' ')[-1],
                 'total_stems': result['TOT.STEMS'],
@@ -120,6 +121,7 @@ def read_excel_file(excel_file):
     write_file = excel_file[:-5] + '.xml'
     with open(write_file, 'wb') as xml_ff:
         xml_ff.write(xml_file)
+
 
 def remove_excel_files(company_name):
     """Delete .xlsx files"""
