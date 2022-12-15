@@ -4,7 +4,7 @@
  - установите необходимые библиотеки командой:
 >pip install -r requirements.txt
  - запустите скрипт командой:
->python Floricola_attaroses_cia_ltda_to_insert.py
+>python Floricola_attaroses.py
 
 ## Описание
 В результате запуска команды вы получите xml файл, который спарсит информацию по заранее заданному шаблону
