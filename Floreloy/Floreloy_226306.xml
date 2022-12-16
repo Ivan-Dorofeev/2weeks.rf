@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<root>
+    <INVOICE_NUMBER type="int">226306</INVOICE_NUMBER>
+    <AVIA_TICKET type="str">176-5146-6030</AVIA_TICKET>
+    <ROSE_WEIGHT type="float">125.0</ROSE_WEIGHT>
+    <ALSTROMETRIA_WEIGHT type="int">0</ALSTROMETRIA_WEIGHT>
+    <FULL_PLACES_COUNT type="float">2.5</FULL_PLACES_COUNT>
+    <BOX_PLACES_COUNT type="int">5</BOX_PLACES_COUNT>
+    <QB_BOX_PLACES_COUNT type="int">0</QB_BOX_PLACES_COUNT>
+    <AMS_DATA type="str">20221021</AMS_DATA>
+    <MSK_DATA type="str">20221026</MSK_DATA>
+    <AWB_CONTRAGENT type="str">ECUCARGA CIA LTDA</AWB_CONTRAGENT>
+    <AWB_BID type="int">0</AWB_BID>
+    <PRICOOL_CONTRAGENT type="str">Floreloy</PRICOOL_CONTRAGENT>
+    <TRACK type="int">0</TRACK>
+    <TRANSPORT_COMPANY type="int">0</TRANSPORT_COMPANY>
+    <key name="MARKING/NOTIFY" type="str">FP21</key>
+    <CONTRAGENT type="int">0</CONTRAGENT>
+    <PRODUCTS type="list">
+        <item type="dict">
+            <name type="str">МОНДИАЛЬ</name>
+            <count type="int">150</count>
+            <nomenclature_characteristic type="str">Floreloy, 60 см</nomenclature_characteristic>
+            <size type="int">60</size>
+            <price type="float">0.5</price>
+            <sum type="int">75</sum>
+            <total_stems type="int">300</total_stems>
+            <is_mixed type="bool">false</is_mixed>
+        </item>
+        <item type="dict">
+            <name type="str">МОНДИАЛЬ</name>
+            <count type="int">150</count>
+            <nomenclature_characteristic type="str">Floreloy, 70 см</nomenclature_characteristic>
+            <size type="int">70</size>
+            <price type="float">0.6</price>
+            <sum type="int">90</sum>
+            <total_stems type="int">300</total_stems>
+            <is_mixed type="bool">false</is_mixed>
+        </item>
+        <item type="dict">
+            <name type="str">МОНДИАЛЬ</name>
+            <count type="int">300</count>
+            <nomenclature_characteristic type="str">Floreloy, 60 см</nomenclature_characteristic>
+            <size type="int">60</size>
+            <price type="float">0.5</price>
+            <sum type="int">150</sum>
+            <total_stems type="int">300</total_stems>
+            <is_mixed type="bool">false</is_mixed>
+        </item>
+        <item type="dict">
+            <name type="str">МОНДИАЛЬ</name>
+            <count type="int">300</count>
+            <nomenclature_characteristic type="str">Floreloy, 60 см</nomenclature_characteristic>
+            <size type="int">60</size>
+            <price type="float">0.5</price>
+            <sum type="int">150</sum>
+            <total_stems type="int">300</total_stems>
+            <is_mixed type="bool">false</is_mixed>
+        </item>
+        <item type="dict">
+            <name type="str">МИКС</name>
+            <count type="int">350</count>
+            <nomenclature_characteristic type="str">Floreloy, 60 см</nomenclature_characteristic>
+            <size type="int">60</size>
+            <price type="float">0.44</price>
+            <sum type="int">154</sum>
+            <total_stems type="int">350</total_stems>
+            <is_mixed type="bool">true</is_mixed>
+        </item>
+        <item type="dict">
+            <name type="str">МИКС</name>
+            <count type="int">400</count>
+            <nomenclature_characteristic type="str">Floreloy, 60 см</nomenclature_characteristic>
+            <size type="int">60</size>
+            <price type="float">0.44</price>
+            <sum type="int">176</sum>
+            <total_stems type="int">400</total_stems>
+            <is_mixed type="bool">true</is_mixed>
+        </item>
+    </PRODUCTS>
+</root>
