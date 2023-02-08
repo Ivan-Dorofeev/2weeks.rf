@@ -185,7 +185,7 @@ def read_excel_file(excel_file):
 
 
 if __name__ == "__main__":
-    company_name = 'invoices/Floreloy'
+    company_name = 'Floreloy'
 
     for root, dirs, files in os.walk(company_name):
         for file in files:
